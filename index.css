@@ -527,55 +527,35 @@ body {
   width: 100%;
   max-width: 800px;
   margin: 0 auto;
+  display: flex;
+  justify-content: center;
 }
 
 .timeline::before {
-  content: "";
-  position: absolute;
-  left: 8px;
-  top: 0;
-  bottom: 0;
-  width: 1px;
-  background: linear-gradient(
-    to bottom,
-    transparent,
-    var(--gold),
-    var(--rose),
-    var(--gold),
-    transparent
-  );
+  display: none;
 }
 
 .memory-card {
   position: relative;
-  width: 100%;
+  width: min(100%, 640px);
   margin-bottom: 50px;
-  padding-left: 28px;
+  padding-left: 0;
   opacity: 0;
   transform: translateY(40px);
 }
 
 .memory-dot {
-  position: absolute;
-  left: 2px;
-  top: 18px;
-  width: 13px;
-  height: 13px;
-  background: var(--rose);
-  border-radius: 50%;
-  border: 2px solid var(--midnight);
-  box-shadow: 0 0 0 3px rgba(196, 122, 108, 0.3);
-  z-index: 2;
+  display: none;
 }
 
 .memory-photo {
   width: 100%;
-  border-radius: 8px;
+  border-radius: 12px;
   overflow: hidden;
   margin-bottom: 14px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.35);
   position: relative;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 4 / 5;
   background: var(--charcoal);
 }
 
@@ -945,42 +925,27 @@ body {
   }
 
   .timeline::before {
-    left: 50%;
-    transform: translateX(-50%);
+    display: none;
   }
 
   .memory-card {
     padding-left: 0;
-    width: 45%;
+    width: min(100%, 700px);
     margin-bottom: 60px;
+    text-align: center;
   }
 
-  .memory-card:nth-child(odd) {
-    margin-left: 0;
-    margin-right: auto;
-    padding-right: 40px;
-    text-align: right;
-  }
-
+  .memory-card:nth-child(odd),
   .memory-card:nth-child(even) {
     margin-left: auto;
-    margin-right: 0;
-    padding-left: 40px;
-    text-align: left;
+    margin-right: auto;
+    padding-right: 0;
+    padding-left: 0;
+    text-align: center;
   }
 
   .memory-dot {
-    left: auto;
-    right: -6px;
-  }
-
-  .memory-card:nth-child(odd) .memory-dot {
-    right: -47px;
-  }
-
-  .memory-card:nth-child(even) .memory-dot {
-    left: -47px;
-    right: auto;
+    display: none;
   }
 
   .finale-section {
