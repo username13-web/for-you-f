@@ -210,7 +210,6 @@
       buttonsArea.style.opacity = "1";
       buttonsArea.style.transform = "translateY(0)";
     }, 900);
-
   }
 
   var mobileNoMessages = [
@@ -241,16 +240,22 @@
   ];
 
   function mobileNoResponse() {
-    var messageIndex = Math.floor(Math.random() * mobileNoMessages.length);
-    var responseIndex = Math.floor(Math.random() * noResponses.length);
-    btnNo.textContent = mobileNoMessages[messageIndex];
+    var messageIndex = Math.floor(Math.random() * noResponses.length);
+
+    // Keep the No button stable
+    btnNo.textContent = "No";
+
+    // Show the response underneath
+    noMessage.textContent = noResponses[messageIndex];
+    noMessage.classList.add("visible");
+
+    // Small animation on No
     btnNo.classList.remove("mobile-tapped");
     void btnNo.offsetWidth;
     btnNo.classList.add("mobile-tapped");
-    noMessage.textContent = noResponses[responseIndex];
-    noMessage.classList.add("visible");
 
     if (fadeTimer) clearTimeout(fadeTimer);
+
     fadeTimer = setTimeout(function () {
       noMessage.classList.remove("visible");
     }, 1800);
