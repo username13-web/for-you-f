@@ -427,25 +427,38 @@
 
   function startMusic() {
     audio.volume = 0;
-    var playPromise = audio.play();
-    if (playPromise !== undefined) {
-      playPromise
-        .then(function () {
+
+    function playFromStartPoint() {
+      audio.currentTime = 123;
+
+      var playPromise = audio.play();
+
+      if (playPromise !== undefined) {
+        playPromise.then(function () {
           musicPlaying = true;
           musicToggle.classList.add("playing");
+
           var vol = 0;
           var fadeIn = setInterval(function () {
             vol += 0.02;
+
             if (vol >= 0.7) {
               vol = 0.7;
               clearInterval(fadeIn);
             }
+
             audio.volume = vol;
           }, 50);
-        })
-        .catch(function () {
-          musicToggle.classList.add("visible");
         });
+      }
+    }
+
+    if (audio.readyState >= 1) {
+      playFromStartPoint();
+    } else {
+      audio.addEventListener("loadedmetadata", playFromStartPoint, {
+        once: true,
+      });
     }
   }
 
