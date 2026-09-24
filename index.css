@@ -1,8 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Inter:wght@300;400;500&family=Caveat:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap");
 
-/* ============================================
-   RESET & VARIABLES
-   ============================================ */
 *,
 *::before,
 *::after {
@@ -72,7 +69,7 @@ body {
 }
 
 /* ============================================
-   AMBIENT PARTICLES CANVAS
+   CANVASES & OVERLAYS
    ============================================ */
 #ambient-canvas {
   position: fixed;
@@ -84,9 +81,6 @@ body {
   pointer-events: none;
 }
 
-/* ============================================
-   VIGNETTE OVERLAY
-   ============================================ */
 .vignette {
   position: fixed;
   top: 0;
@@ -102,9 +96,6 @@ body {
   );
 }
 
-/* ============================================
-   HEARTS CANVAS OVERLAY
-   ============================================ */
 #hearts-canvas {
   position: fixed;
   top: 0;
@@ -253,7 +244,9 @@ body {
   border-radius: 2px;
   box-shadow: 0 1px 6px rgba(0, 0, 0, 0.08);
   z-index: 2;
-  transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1) 0.2s;
+  transition:
+    transform 1s cubic-bezier(0.4, 0, 0.2, 1) 0.2s,
+    box-shadow 0.6s ease 0.4s;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -315,25 +308,15 @@ body {
 .question-container {
   text-align: center;
   max-width: 600px;
-}
-
-.question-pretext {
-  font-family: "Inter", sans-serif;
-  font-size: 0.8rem;
-  letter-spacing: 4px;
-  text-transform: uppercase;
-  color: var(--gold);
-  margin-bottom: 32px;
-  opacity: 0;
-  transform: translateY(20px);
+  width: 100%;
 }
 
 .question-main {
   font-family: "Playfair Display", serif;
-  font-size: clamp(2rem, 7vw, 4rem);
+  font-size: clamp(2rem, 7vw, 3.8rem);
   font-weight: 700;
   line-height: 1.2;
-  margin-bottom: 16px;
+  margin-bottom: 48px;
   opacity: 0;
   transform: translateY(30px);
   background: linear-gradient(135deg, var(--cream), var(--gold-light));
@@ -342,38 +325,22 @@ body {
   background-clip: text;
 }
 
-.question-sub {
-  font-family: "Playfair Display", serif;
-  font-style: italic;
-  font-size: clamp(1rem, 3vw, 1.4rem);
-  color: var(--blush);
-  margin-bottom: 48px;
-  opacity: 0;
-  transform: translateY(20px);
-}
-
-.buttons-container {
+.buttons-area {
   display: flex;
-  gap: 20px;
+  gap: 24px;
   justify-content: center;
   align-items: center;
-  flex-wrap: wrap;
   opacity: 0;
   transform: translateY(20px);
-  position: relative;
-  min-height: 80px;
 }
 
 .btn {
   border: none;
   cursor: pointer;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-  overflow: hidden;
   white-space: nowrap;
 }
 
-/* ---- YES BUTTON RESTYLED ---- */
+/* YES BUTTON */
 .btn-yes {
   font-family: "Cormorant Garamond", serif;
   font-weight: 600;
@@ -385,33 +352,13 @@ body {
   padding: 18px 52px;
   border-radius: 0;
   position: relative;
-  overflow: hidden;
   text-transform: uppercase;
-  box-shadow: none;
-}
-
-.btn-yes::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 0%;
-  height: 100%;
-  background: var(--gold);
-  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-  z-index: -1;
 }
 
 .btn-yes:hover {
-  color: var(--midnight);
-  box-shadow: 0 0 30px rgba(201, 168, 108, 0.25);
+  color: var(--cream);
 }
 
-.btn-yes:hover::before {
-  width: 100%;
-}
-
-/* small SVG heart inside yes button */
 .btn-yes-heart {
   display: inline-block;
   width: 14px;
@@ -426,7 +373,7 @@ body {
   transform: scale(1.3);
 }
 
-/* ---- NO BUTTON ---- */
+/* NO BUTTON */
 .btn-no {
   font-family: "Cormorant Garamond", serif;
   font-weight: 500;
@@ -438,85 +385,46 @@ body {
   padding: 18px 52px;
   border: 1px solid rgba(232, 196, 184, 0.15);
   border-radius: 0;
-  position: relative;
+  user-select: none;
+  opacity: 1;
+  pointer-events: all;
 }
 
-.btn-no:hover {
-  border-color: rgba(232, 196, 184, 0.35);
-  color: rgba(232, 196, 184, 0.7);
+.btn-no.mobile-tapped {
+  animation: no-tap 0.35s ease;
 }
 
-.no-counter {
-  position: absolute;
-  bottom: -40px;
-  left: 50%;
-  transform: translateX(-50%);
+@keyframes no-tap {
+  0%,
+  100% {
+    transform: rotate(0deg) scale(1);
+  }
+  35% {
+    transform: rotate(-4deg) scale(1.05);
+  }
+  70% {
+    transform: rotate(4deg) scale(1.05);
+  }
+}
+
+/* NO MESSAGE */
+.no-message {
+  margin-top: 24px;
   font-family: "Caveat", cursive;
-  font-size: 1rem;
+  font-size: 1.1rem;
   color: var(--rose);
   opacity: 0;
-  transition: opacity 0.4s;
+  transition: opacity 0.5s;
   white-space: nowrap;
+  min-height: 30px;
+}
+
+.no-message.visible {
+  opacity: 1;
 }
 
 /* ============================================
-   SCENE 3: TAKEOVER
-   ============================================ */
-#scene-takeover {
-  background: linear-gradient(
-    135deg,
-    var(--rose),
-    var(--deep-rose),
-    var(--burgundy)
-  );
-  cursor: pointer;
-  padding: 24px;
-}
-
-.takeover-content {
-  text-align: center;
-  opacity: 0;
-  transform: scale(0.8);
-}
-
-.takeover-text {
-  font-family: "Playfair Display", serif;
-  font-size: clamp(2.5rem, 10vw, 6rem);
-  font-weight: 700;
-  color: var(--cream);
-  line-height: 1.1;
-  margin-bottom: 24px;
-}
-
-.takeover-sub {
-  font-family: "Caveat", cursive;
-  font-size: clamp(1.2rem, 4vw, 1.8rem);
-  color: rgba(250, 246, 241, 0.7);
-  margin-bottom: 40px;
-}
-
-.takeover-btn {
-  font-family: "Cormorant Garamond", serif;
-  font-size: 1rem;
-  font-weight: 600;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  color: var(--cream);
-  padding: 18px 52px;
-  border-radius: 0;
-  cursor: pointer;
-  transition: all 0.4s;
-}
-
-.takeover-btn:hover {
-  background: rgba(255, 255, 255, 0.12);
-  border-color: rgba(255, 255, 255, 0.7);
-}
-
-/* ============================================
-   SCENE 4: TRANSITION
+   SCENE 3: TRANSITION
    ============================================ */
 #scene-transition {
   background: var(--midnight);
@@ -541,7 +449,7 @@ body {
 }
 
 /* ============================================
-   SCENE 5: MEMORIES
+   SCENE 4: MEMORIES
    ============================================ */
 #scene-memories {
   background: var(--midnight);
@@ -581,7 +489,6 @@ body {
   color: var(--blush);
 }
 
-/* TIMELINE */
 .timeline {
   position: relative;
   max-width: 800px;
@@ -863,28 +770,6 @@ body {
   50% {
     transform: rotate(45deg) translateY(6px);
     opacity: 0.6;
-  }
-}
-
-/* ============================================
-   SHAKE ANIMATION
-   ============================================ */
-@keyframes shake {
-  0%,
-  100% {
-    transform: translateX(0);
-  }
-  20% {
-    transform: translateX(-8px) rotate(-2deg);
-  }
-  40% {
-    transform: translateX(8px) rotate(2deg);
-  }
-  60% {
-    transform: translateX(-4px) rotate(-1deg);
-  }
-  80% {
-    transform: translateX(4px) rotate(1deg);
   }
 }
 
