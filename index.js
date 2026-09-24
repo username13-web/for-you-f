@@ -2,16 +2,6 @@
   "use strict";
 
   /* ============================================
-     INJECT SVG HEART INTO YES BUTTON
-     ============================================ */
-  var btnYes = document.getElementById("btn-yes");
-  btnYes.innerHTML =
-    "Yes, I forgive you " +
-    '<svg class="btn-yes-heart" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 ' +
-    "2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 " +
-    '19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>';
-
-  /* ============================================
      AMBIENT PARTICLES
      ============================================ */
   var ambientCanvas = document.getElementById("ambient-canvas");
@@ -46,14 +36,14 @@
       p.x += p.speedX;
       p.y += p.speedY;
       p.pulse += 0.01;
-      var currentOpacity = p.opacity * (0.5 + 0.5 * Math.sin(p.pulse));
+      var op = p.opacity * (0.5 + 0.5 * Math.sin(p.pulse));
       if (p.x < -10) p.x = ambientCanvas.width + 10;
       if (p.x > ambientCanvas.width + 10) p.x = -10;
       if (p.y < -10) p.y = ambientCanvas.height + 10;
       if (p.y > ambientCanvas.height + 10) p.y = -10;
       ambientCtx.beginPath();
       ambientCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-      ambientCtx.fillStyle = "rgba(201, 168, 108, " + currentOpacity + ")";
+      ambientCtx.fillStyle = "rgba(201, 168, 108, " + op + ")";
       ambientCtx.fill();
     }
     requestAnimationFrame(animateAmbient);
@@ -74,12 +64,12 @@
   var heartsCtx = heartsCanvas.getContext("2d");
   var hearts = [];
   var heartsActive = false;
+  var heartColors = ["#c47a6c", "#e8c4b8", "#c9a86c", "#dfc9a0", "#a85751"];
 
   function resizeHearts() {
     heartsCanvas.width = window.innerWidth;
     heartsCanvas.height = window.innerHeight;
   }
-
   resizeHearts();
   window.addEventListener("resize", resizeHearts);
 
@@ -99,8 +89,6 @@
     ctx.fill();
     ctx.restore();
   }
-
-  var heartColors = ["#c47a6c", "#e8c4b8", "#c9a86c", "#dfc9a0", "#a85751"];
 
   function spawnHearts(count) {
     for (var i = 0; i < count; i++) {
@@ -133,12 +121,9 @@
       }
     }
     hearts = alive;
-    if (heartsActive && Math.random() < 0.3) {
-      spawnHearts(1);
-    }
+    if (heartsActive && Math.random() < 0.3) spawnHearts(1);
     requestAnimationFrame(animateHearts);
   }
-
   animateHearts();
 
   function burstHearts(x, y, count) {
@@ -170,13 +155,11 @@
         allScenes[i].classList.remove("active");
       }
     }
-
     setTimeout(function () {
       for (var j = 0; j < allScenes.length; j++) {
         allScenes[j].classList.remove("fade-out");
       }
-      var target = document.getElementById(sceneId);
-      target.classList.add("active");
+      document.getElementById(sceneId).classList.add("active");
       if (callback) callback();
     }, 800);
   }
@@ -198,7 +181,6 @@
       envelopeOpened = true;
       envelope.classList.add("opened");
       envelopeHint.style.opacity = "0";
-
       setTimeout(function () {
         envelopeHint.textContent = "tap to continue";
         envelopeHint.style.opacity = "1";
@@ -206,157 +188,88 @@
     });
 
   /* ============================================
-     SCENE 2: QUESTION ANIMATION
+     SCENE 2: QUESTION ENTRANCE
      ============================================ */
+  var btnYes = document.getElementById("btn-yes");
+  var btnNo = document.getElementById("btn-no");
+  var noMessage = document.getElementById("no-message");
+  var buttonsArea = document.getElementById("buttons-area");
+  var fadeTimer = null;
+
   function animateQuestionIn() {
-    var items = [
-      document.getElementById("q-pretext"),
-      document.getElementById("q-main"),
-      document.getElementById("q-sub"),
-      document.getElementById("buttons-container"),
-    ];
-    for (var i = 0; i < items.length; i++) {
-      (function (el, delay) {
-        setTimeout(function () {
-          el.style.transition = "opacity 0.8s ease, transform 0.8s ease";
-          el.style.opacity = "1";
-          el.style.transform = "translateY(0)";
-        }, delay);
-      })(items[i], 300 + i * 400);
-    }
+    var main = document.getElementById("q-main");
+
+    setTimeout(function () {
+      main.style.transition = "opacity 0.8s ease, transform 0.8s ease";
+      main.style.opacity = "1";
+      main.style.transform = "translateY(0)";
+    }, 300);
+
+    setTimeout(function () {
+      buttonsArea.style.transition = "opacity 0.8s ease, transform 0.8s ease";
+      buttonsArea.style.opacity = "1";
+      buttonsArea.style.transform = "translateY(0)";
+    }, 900);
+
   }
 
-  /* ============================================
-     NO BUTTON MECHANIC
-     ============================================ */
-  var noCount = 0;
-  var btnNo = document.getElementById("btn-no");
-  var noCounter = document.getElementById("no-counter");
-  var buttonsContainer = document.getElementById("buttons-container");
-
-  var noTexts = [
+  var mobileNoMessages = [
     "No",
     "Are you sure?",
-    "Really?!",
-    "Think again...",
-    "Pretty please?",
-    "I'll be sad...",
-    "Don't do this",
-    "My heart is breaking",
-    "PLEASE",
-    "I'm begging you",
-    "okay fine...",
+    "Really sure?",
+    "Think about it...",
+    "Okay, one last thought?",
+    "That answer feels suspicious",
+    "Maybe try Yes?",
+    "My heart says reconsider",
+    "You pressed No again?",
+    "I respect the confidence",
+    "Interesting choice...",
+    "The Yes button is right there",
+    "I will keep asking",
+    "Still no?",
+    "This is becoming a tradition",
   ];
 
-  var counterTexts = [
-    "",
-    "...really?",
-    "you're being mean",
-    "I'm literally pouting right now",
-    "my heart just cracked a little",
-    "okay that one hurt",
-    "you know you want to forgive me",
-    "resistance is futile",
-    "the yes button is growing...",
-    "last chance before takeover",
-    "",
+  var noResponses = [
+    "I had a feeling you'd say that...",
+    "I am not giving up that easily.",
+    "You are making this very difficult.",
+    "That is a bold choice.",
+    "I will ask again in a moment.",
+    "The button has opinions too.",
   ];
 
-  function handleNo() {
-    noCount++;
+  function mobileNoResponse() {
+    var messageIndex = Math.floor(Math.random() * mobileNoMessages.length);
+    var responseIndex = Math.floor(Math.random() * noResponses.length);
+    btnNo.textContent = mobileNoMessages[messageIndex];
+    btnNo.classList.remove("mobile-tapped");
+    void btnNo.offsetWidth;
+    btnNo.classList.add("mobile-tapped");
+    noMessage.textContent = noResponses[responseIndex];
+    noMessage.classList.add("visible");
 
-    if (noCount >= 10) {
-      showScene("scene-takeover", animateTakeover);
-      return;
-    }
-
-    btnNo.textContent = noTexts[Math.min(noCount, noTexts.length - 1)];
-
-    var ct = counterTexts[Math.min(noCount, counterTexts.length - 1)];
-    noCounter.textContent = ct;
-    noCounter.style.opacity = ct ? "1" : "0";
-
-    // YES grows
-    var scale = 1 + noCount * 0.12;
-    var padV = 18 + noCount * 3;
-    var padH = 52 + noCount * 8;
-    var fontSize = 1.15 + noCount * 0.06;
-    btnYes.style.transform = "scale(" + scale + ")";
-    btnYes.style.padding = padV + "px " + padH + "px";
-    btnYes.style.fontSize = fontSize + "rem";
-    btnYes.style.borderColor = "var(--gold)";
-    btnYes.style.boxShadow =
-      "0 0 " +
-      noCount * 8 +
-      "px rgba(201, 168, 108, " +
-      (0.1 + noCount * 0.04) +
-      ")";
-
-    // NO shrinks
-    btnNo.style.fontSize = Math.max(0.65, 1.05 - noCount * 0.05) + "rem";
-    btnNo.style.opacity = "" + Math.max(0.25, 1 - noCount * 0.08);
-    btnNo.style.padding =
-      Math.max(8, 18 - noCount * 1.5) +
-      "px " +
-      Math.max(16, 52 - noCount * 5) +
-      "px";
-
-    // After 4 clicks dodge
-    if (noCount >= 4) {
-      btnNo.style.position = "absolute";
-      var containerRect = buttonsContainer.getBoundingClientRect();
-      var maxX = containerRect.width - 110;
-      var maxY = 200;
-      btnNo.style.left = Math.random() * maxX + "px";
-      btnNo.style.top = Math.random() * maxY - 100 + "px";
-      btnNo.style.transition = "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)";
-    }
-
-    // Shake
-    btnNo.style.animation = "none";
-    void btnNo.offsetHeight;
-    btnNo.style.animation = "shake 0.4s ease";
+    if (fadeTimer) clearTimeout(fadeTimer);
+    fadeTimer = setTimeout(function () {
+      noMessage.classList.remove("visible");
+    }, 1800);
   }
 
-  btnNo.addEventListener("click", function (e) {
-    e.stopPropagation();
-    handleNo();
-  });
-
-  btnNo.addEventListener("mouseenter", function () {
-    if (noCount >= 5) {
-      var rect = buttonsContainer.getBoundingClientRect();
-      var maxX = rect.width - 100;
-      var maxY = 180;
-      btnNo.style.left = Math.random() * maxX + "px";
-      btnNo.style.top = Math.random() * maxY - 90 + "px";
-    }
-  });
-
-  btnNo.addEventListener(
-    "touchstart",
-    function (e) {
-      if (noCount >= 5) {
-        e.preventDefault();
-        var rect = buttonsContainer.getBoundingClientRect();
-        var maxX = rect.width - 100;
-        var maxY = 180;
-        btnNo.style.left = Math.random() * maxX + "px";
-        btnNo.style.top = Math.random() * maxY - 90 + "px";
-        handleNo();
-      }
-    },
-    { passive: false },
-  );
+  btnNo.addEventListener("click", mobileNoResponse);
 
   /* ============================================
-     FORGIVENESS
+     YES → FORGIVENESS
      ============================================ */
   var forgivenessTriggered = false;
 
   function triggerForgiveness() {
     if (forgivenessTriggered) return;
     forgivenessTriggered = true;
+
+    btnNo.style.opacity = "0";
+    btnNo.style.pointerEvents = "none";
+    noMessage.classList.remove("visible");
 
     heartsCanvas.classList.add("active");
     burstHearts(window.innerWidth / 2, window.innerHeight / 2, 30);
@@ -372,36 +285,8 @@
     triggerForgiveness();
   });
 
-  document
-    .getElementById("takeover-btn")
-    .addEventListener("click", function (e) {
-      e.stopPropagation();
-      triggerForgiveness();
-    });
-
-  document
-    .getElementById("scene-takeover")
-    .addEventListener("click", function (e) {
-      if (e.target === this || e.target.closest(".takeover-content")) {
-        triggerForgiveness();
-      }
-    });
-
   /* ============================================
-     SCENE 3: TAKEOVER
-     ============================================ */
-  function animateTakeover() {
-    var content = document.getElementById("takeover-content");
-    setTimeout(function () {
-      content.style.transition =
-        "opacity 1s ease, transform 1s cubic-bezier(0.4, 0, 0.2, 1)";
-      content.style.opacity = "1";
-      content.style.transform = "scale(1)";
-    }, 300);
-  }
-
-  /* ============================================
-     SCENE 4: TRANSITION
+     SCENE 3: TRANSITION
      ============================================ */
   function animateTransition() {
     var lines = document.querySelectorAll("#transition-text .line");
@@ -431,7 +316,7 @@
   }
 
   /* ============================================
-     SCENE 5: MEMORIES
+     SCENE 4: MEMORIES
      ============================================ */
   function animateMemories() {
     var header = document.getElementById("memories-header");
